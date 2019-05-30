@@ -7,19 +7,9 @@ var plugins = require('gulp-load-plugins')();
 // Generate the peg from the grammar
 function generatePeg() {
   return gulp.src('src/tidal.pegjs')
-    .pipe(gulp.dest('dist')) // Add the tidal.pegjs file to dist to do everything in the same directory
     .pipe(plugins.pegjs({format: 'commonjs'}))
     .pipe(gulp.dest('dist'));
 }
-
-
-// Concatenate the flatten.js file with the generated peg
-function flatten(){
-  return gulp.src(['dist/tidal.js', 'src/flatten.js'])
-    .pipe(plugins.concat('peg-parse-flatten.js'))
-    .pipe(gulp.dest('dist'));
-}
-
 
 // Run tests
 function runTests(){
@@ -44,8 +34,7 @@ function clean(){
 
 // Task definitions
 gulp.task('build', generatePeg);
-gulp.task('flatten', gulp.series('build', flatten));
-gulp.task('test', gulp.series('flatten', runTests));
+gulp.task('test', gulp.series('build', runTests));
 gulp.task('watch', watchFiles);
 gulp.task('clean', clean);
 gulp.task('default', gulp.series('build'));

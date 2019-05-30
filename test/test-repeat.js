@@ -6,20 +6,36 @@
 
 const assert = require( 'assert')
 const parser = require('../dist/tidal.js')
+const Tracer = require('pegjs-backtrace')
+
 
 describe( "Testing repeats with '*'", () => {
+
+  it( 'should not allow a number without an operator.', () => {
+
+    let failed = false
+    try {
+      parser.parse( '2' )
+    } catch(err) {
+      failed = true
+    }
+    assert.equal(failed, true)
+  });
 
 
   it( 'should generate a 2x repeat on a number.', () => {
 
     const expected = {
-      type: 'repeat',
-      operator:'*',
-      repeatValue: { type: 'number', value: 2 },
-      value: { type:'number', value:0 }
+      '0': {
+        type: 'repeat',
+        operator:'*',
+        repeatValue: { type: 'number', value: 2 },
+        value: { type:'emoji', value:'💚' }
+      },
+      type: 'group',
     }
 
-    const result = parser.parse( '0*2' )
+    const result = parser.parse( '💚*2' )
 
     assert.deepEqual(result, expected)
 
@@ -30,52 +46,34 @@ describe( "Testing repeats with '*'", () => {
     const expected = {
       type:'repeat',
       operator: '*',
-      repeatValue:{ type:'number', value:2 },
+      repeatValue: { type: 'number', value: 2 },
       value: {
-        '0': { type:'number', value:2 },
-        '1/2': { type:'number', value:1 },
+        '0': { type:'emoji', value:'💜' },
+        '1/2': { type:'emoji', value:'💚' },
         type: 'group'
       },
     }
 
-    const result = parser.parse( '[2 1]*2' )
+return
 
-    assert.deepEqual( result, expected )
 
-  });
+    const text = '[💜 💚]*2'
+    const tracer = new Tracer(text, {showTrace: true, hiddenPaths:["Emoji_Raw", 'Emoji_Variant']})
+    let failed = false
+    try {
+      const result = parser.parse(text, { tracer:tracer });
+      assert.deepEqual(expected , result)
 
-  it('test euclid and repeat', () => {
-
-    const expected = {
-      '0': {type: 'number', value: 0},
-      '1/3':{
-        '0':{
-          '0': {type: 'number', value:2},
-          '1/2': {type: 'number', value: 3},
-          type: 'group'
-        },
-        '1/2': {
-          '0': {type: 'number', value: 2},
-          '1/3': {
-            value: {type: 'number', value: 4},
-            soundNum: {type: 'number', value: 3},
-            steps: {type: 'number', value: 8},
-            rotateStep: {type: 'number', value: 9},
-            type: 'euclid'
-          },
-          '2/3': {
-            type: 'repeat',
-            operator: '*',
-            repeatValue: {type: 'number', value: 2},
-            value: {type: 'number', value:7}
-          }
-        }
-      },
-      '2/3': {type: 'number', value: 5},
-      type: 'group'
+    } catch(e) {
+      failed = true
+      console.log(tracer.getBacktraceString());
     }
 
-    const result = parser.parse('0 [[2 3] [2 4(3,8,9) 7*2]] 5');
+    assert.deepEqual(failed , false)
+
+
+
   });
+
 
 })

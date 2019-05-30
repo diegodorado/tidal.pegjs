@@ -30,6 +30,7 @@
     "pegjs": "^0.10.0"
   },
   "dependencies": {
-    "fraction.js": "^4.0.12"
+    "fraction.js": "^4.0.12",
+    "pegjs-backtrace": "^0.2.0"
   }
 }

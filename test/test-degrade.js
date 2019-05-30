@@ -6,6 +6,7 @@
 
 const assert = require( 'assert')
 const parser = require('../dist/tidal.js')
+const Tracer = require('pegjs-backtrace')
 
 describe( 'Testing degradation.', () => {
 
@@ -14,14 +15,15 @@ describe( 'Testing degradation.', () => {
     const expected = {
       '0': {
         type: 'degrade',
-        value: {type: 'number', value: 0}
+        value: {type: 'emoji', value: '🤩'}
       },
-      type: 'group'
+      type: 'group',
     }
 
-    const result = parser.parse( '0?' )
+    const result = parser.parse( '🤩?' )
 
-    assert.deepEqual( expected, result )
+    assert.deepEqual( result , expected)
+
   });
 
 
@@ -29,22 +31,44 @@ describe( 'Testing degradation.', () => {
       const expected = {
         '0': {
           type:'degrade',
-          value:{ type:'number', value:1 }
+          value:{ type:'emoji', value:'🤩' }
         },
         '1/3': {
           type:'degrade',
-          value:{ type:'number', value:2 }
+          value:{ type:'emoji', value:'🤢' }
         },
         '2/3': {
           type:'degrade',
-          value:{ type:'number', value:3 }
+          value:{ type:'emoji', value:'👿' }
         },
         type: 'group'
       }
 
-      const result = parser.parse( '1? 2? 3?' )
+      const result = parser.parse( '🤩? 🤢? 👿?' )
 
-      assert.deepEqual( expected, result )
+      assert.deepEqual( result , expected)
     });
+
+
+    it( 'should degrade a repetition when followed by a question mark.', () => {
+
+      const expected = {
+        '0': {
+          type: 'degrade',
+          value: {
+            operator: '*',
+            repeatValue: { type: 'number', value: 6 },
+            value: { type:'emoji', value:'😿' },
+            type: 'repeat',
+          },
+        },
+        type: 'group',
+      }
+
+      const result = parser.parse( '😿*6?' )
+      assert.deepEqual( result , expected)
+    });
+
+
 
 })

@@ -10,29 +10,29 @@ const parser = require('../dist/tidal.js')
 describe( 'Testing simple number series groups.', () => {
 
 
-  it( '"0 1 2" should parse to an array of three numbers, marked as a group.', () => {
+  it( '"😂 🤣 😃" should parse to an array of three emojis, marked as a group.', () => {
     const expected = {
-      '0': {type: 'number', value: 0},
-      '1/3': {type: 'number', value: 1},
-      '2/3': {type: 'number', value: 2},
+      '0': {type: 'emoji', value: '😂'},
+      '1/3': {type: 'emoji', value: '🤣'},
+      '2/3': {type: 'emoji', value: '😃'},
       type: 'group'
     }
-    const result = parser.parse( '0 1 2' )
+    const result = parser.parse( '😂 🤣 😃' )
 
     assert.deepEqual( expected, result )
   })
 
 
-  it ('"a" should parse to an array of 1 string, marked as group.', () => {
+  it ('"😂" should parse to an array of 1 emoji, marked as group.', () => {
 
     const expected = {
-      '0': {type: 'string', value: 'a'},
+      '0': {type: 'emoji', value: '😂'},
       type: 'group'
     }
 
-    const result = parser.parse('a')
+    const result = parser.parse('😂')
 
-    assert.deepEqual(expected, result)
+    assert.deepEqual( result , expected)
   })
 
 })
